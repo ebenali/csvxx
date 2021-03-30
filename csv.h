@@ -9,6 +9,7 @@
 #include <cstring>
 #include <istream>
 #include <stdexcept>
+#include <numeric>
 #include <string>
 #include <utility>
 #include <vector>
@@ -54,12 +55,22 @@ class Row {
 		return hdr_ != nullptr;
 	}
 
-	decomposed_line_t &line() {
+	decomposed_line_t &line()
+	{
 		return row_;
 	}
 
-	decomposed_line_t const &line() const {
+	decomposed_line_t const &line() const
+	{
 		return row_;
+	}
+
+	std::string str() const
+	{
+		std::string retv;
+		return inner_product(hdr_->cbegin(), hdr_->cend(), row_.cbegin(), std::string{},
+				     std::plus<std::string>{},
+				     [](auto const &hdr, auto const &col) { return hdr + "=" + col + ","; });
 	}
 
     private:
@@ -134,4 +145,3 @@ class Reader {
 	}
 };
 } // namespace csv
-
